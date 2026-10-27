@@ -19,6 +19,7 @@
 
 ```text
 PyQt/
+├── run_all.py    # 一键检查 / 运行练习
 ├── work1/        # Python 基础语法
 ├── work2/        # 字符串与列表
 ├── work3/        # 二维列表
@@ -38,6 +39,14 @@ PyQt/
 ```bash
 python work1/test1.py
 python work2/test2_1.py
+```
+
+也可以使用 `run_all.py` 批量查看和检查：
+
+```bash
+python run_all.py --list              # 列出全部练习
+python run_all.py                     # 检查全部练习语法
+python run_all.py --run work1/test1.py  # 运行指定练习
 ```
 
 ## 技术栈 / 学习点
