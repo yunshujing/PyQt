@@ -49,6 +49,12 @@ python run_all.py                     # 检查全部练习语法
 python run_all.py --run work1/test1.py  # 运行指定练习
 ```
 
+## 测试
+
+```bash
+python -m unittest discover -s tests
+```
+
 ## 技术栈 / 学习点
 
 - Python 基础语法、输入输出、条件与循环
