@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import py_compile
 import subprocess
 import sys
 from pathlib import Path
@@ -76,11 +75,12 @@ def show_stats(files: list[Path]) -> None:
 
 
 def check_exercises(files: list[Path]) -> int:
+    """用 compile() 在内存里检查语法，不在练习目录留下 __pycache__。"""
     failed = 0
     for path in files:
         try:
-            py_compile.compile(str(path), doraise=True)
-        except py_compile.PyCompileError as exc:
+            compile(path.read_text(encoding="utf-8"), str(path), "exec")
+        except (SyntaxError, UnicodeDecodeError) as exc:
             failed += 1
             print(f"[FAIL] {path.relative_to(ROOT)}\n{exc}")
         else:
