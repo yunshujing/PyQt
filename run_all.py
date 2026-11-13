@@ -6,6 +6,8 @@
     python run_all.py --list             # 按目录列出全部练习
     python run_all.py --json             # 以 JSON 输出练习列表
     python run_all.py --list --grep 3    # 只列出文件名包含 3 的练习
+    python run_all.py --quiet            # 只输出检查失败的文件
+    python run_all.py --version          # 显示版本号
     python run_all.py --run work1/test1.py
 """
 
@@ -16,6 +18,8 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+
+__version__ = "0.2.0"
 
 ROOT = Path(__file__).resolve().parent
 EXERCISE_DIRS = ("class", "work1", "work2", "work3", "work4")
@@ -74,7 +78,7 @@ def show_stats(files: list[Path]) -> None:
     print(f"{'total':<8}{total_files:>7}{total_lines:>8}")
 
 
-def check_exercises(files: list[Path]) -> int:
+def check_exercises(files: list[Path], quiet: bool = False) -> int:
     """用 compile() 在内存里检查语法，不在练习目录留下 __pycache__。"""
     failed = 0
     for path in files:
@@ -84,7 +88,8 @@ def check_exercises(files: list[Path]) -> int:
             failed += 1
             print(f"[FAIL] {path.relative_to(ROOT)}\n{exc}")
         else:
-            print(f"[OK]   {path.relative_to(ROOT)}")
+            if not quiet:
+                print(f"[OK]   {path.relative_to(ROOT)}")
     print(f"\n检查完成：{len(files) - failed}/{len(files)} 通过")
     return 1 if failed else 0
 
@@ -105,6 +110,8 @@ def main() -> int:
     group.add_argument("--stats", action="store_true", help="按目录统计练习数量与代码行数")
     group.add_argument("--run", metavar="FILE", help="运行指定练习，例如 work1/test1.py")
     parser.add_argument("--grep", metavar="TEXT", help="只保留文件名包含 TEXT 的练习")
+    parser.add_argument("--quiet", action="store_true", help="检查时只输出失败的文件")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     args = parser.parse_args()
 
     if args.run:
@@ -123,7 +130,7 @@ def main() -> int:
     if args.stats:
         show_stats(files)
         return 0
-    return check_exercises(files)
+    return check_exercises(files, quiet=args.quiet)
 
 
 if __name__ == "__main__":
