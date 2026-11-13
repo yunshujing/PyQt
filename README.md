@@ -45,6 +45,7 @@ python work2/test2_1.py
 
 ```bash
 python run_all.py --list              # 列出全部练习
+python run_all.py --stats             # 按目录统计练习数量与代码行数
 python run_all.py                     # 检查全部练习语法
 python run_all.py --run work1/test1.py  # 运行指定练习
 ```

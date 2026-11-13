@@ -38,6 +38,21 @@ def list_exercises(files: list[Path]) -> None:
     print(f"\n共 {len(files)} 个练习文件")
 
 
+def show_stats(files: list[Path]) -> None:
+    print(f"{'dir':<8}{'files':>7}{'lines':>8}")
+    total_files = 0
+    total_lines = 0
+    for dirname in EXERCISE_DIRS:
+        group = [path for path in files if path.parent.name == dirname]
+        if not group:
+            continue
+        lines = sum(len(path.read_text(encoding="utf-8", errors="replace").splitlines()) for path in group)
+        total_files += len(group)
+        total_lines += lines
+        print(f"{dirname:<8}{len(group):>7}{lines:>8}")
+    print(f"{'total':<8}{total_files:>7}{total_lines:>8}")
+
+
 def check_exercises(files: list[Path]) -> int:
     failed = 0
     for path in files:
@@ -64,12 +79,16 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="PyQt 课程练习工具")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--list", action="store_true", help="列出全部练习")
+    group.add_argument("--stats", action="store_true", help="按目录统计练习数量与代码行数")
     group.add_argument("--run", metavar="FILE", help="运行指定练习，例如 work1/test1.py")
     args = parser.parse_args()
 
     files = collect_exercises()
     if args.list:
         list_exercises(files)
+        return 0
+    if args.stats:
+        show_stats(files)
         return 0
     if args.run:
         return run_exercise(args.run)
